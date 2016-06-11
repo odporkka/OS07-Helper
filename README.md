@@ -1,2 +1,3 @@
 # OS07-Helper
-Helper for OS07
+##Tool to help with os07
+AFK-preventer etc.
