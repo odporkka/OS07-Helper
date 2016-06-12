@@ -3,7 +3,14 @@ import Tools.AFK_Preventer;
 import Tools.ToolRunTimer;
 import java.awt.AWTException;
 import java.awt.Robot;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Random;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -39,16 +46,19 @@ class ArgHandler {
 
         if (command.equals("afk")) {
             invokeAfkPreventer();
+        } else if (command.equals("help")) {
+            printHelp();
         } else {
             System.out.println("No command: \"" + args[0] + "\" found!");
+            printHelp();
         }
         System.out.println("Run succesfull!");
         System.out.println("Quitting!");
     }
 
     /**
-     * Method for starting AFK_Preventer tool in new thread. If time is set also
-     * ToolRunTimer starts and stops AFK_Preventer after given time.
+     * Method for starting AFK_Preventer tool in a new thread. If time is set
+     * ToolRunTimer starts too and stops AFK_Preventer after given time.
      */
     private void invokeAfkPreventer() {
         Thread t1 = new Thread(afk_p);
@@ -70,18 +80,34 @@ class ArgHandler {
 
             synchronized (t2) {
                 try {
-                    System.out.println("Running AFK_Preventer for " + waitTime+ " minutes...");
-                    System.out.println("Press ctrl-c in terminal or quit manually to stop.");
+                    System.out.println("Running AFK_Preventer for " + waitTime + " minutes...");
+                    System.out.println("Press ctrl-c twice in terminal or quit manually to stop.");
                     t2.wait();
                     System.out.println("Stopping...");
                     trt.join();
                     afk_p.stop();
-                    
+
                 } catch (InterruptedException ex) {
                     Logger.getLogger(ArgHandler.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
 
+        }
+
+    }
+
+    private void printHelp() {
+        ClassLoader cl = getClass().getClassLoader();
+        InputStream is = cl.getResourceAsStream("help.txt");
+        BufferedReader br = new BufferedReader(new InputStreamReader(is));
+
+        String line;
+        try {
+            while ((line = br.readLine()) != null) {
+                System.out.println(line);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(ArgHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }

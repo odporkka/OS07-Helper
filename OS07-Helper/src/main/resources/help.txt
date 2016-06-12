@@ -1,0 +1,14 @@
+OS07 HELPER 1.0 by Ode
+
+SYNOPSIS:
+
+java -jar [programname].jar [afk] [runTime]
+
+RunTime is in minutes and optional.
+
+AFK:
+
+If time is not set AFK_Preventer will run until closed.
+Default key that is pressed is left arrow. Press interval is randomized between
+0 and 20 minutes.
+

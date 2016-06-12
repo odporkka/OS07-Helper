@@ -8,7 +8,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * AFK prevention tool. Randomizes time between keystrokes to avoid detection.
+ * Also key press is randomized between 100 and 200 milliseconds to simulate
+ * natural action. Tool is ran in a own thread invoked at upper level.
+ * 
  * @author ode
  */
 public class AFK_Preventer implements Runnable{
@@ -28,6 +31,9 @@ public class AFK_Preventer implements Runnable{
         this.isRunning = false;
     }
 
+    /**
+     * Method for key press. Runs until stopped by stop() -method.
+     */
     @Override
     public synchronized void run() {
         this.isRunning = true;
