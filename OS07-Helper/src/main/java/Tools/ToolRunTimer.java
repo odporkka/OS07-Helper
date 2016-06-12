@@ -5,7 +5,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * Timer class for handling run time. Time is set in hours, minutes and seconds.
+ * When timer hits zero Timer notifies all components that are listening and
+ * they are responsible for other actions including closing timers thread.
  * @author ode
  */
 public class ToolRunTimer extends Thread {
