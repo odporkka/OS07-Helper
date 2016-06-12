@@ -107,6 +107,7 @@ public class AFK_Preventer implements Runnable {
         if (firstPress) {
             int r = random.nextInt(4);
             if (r > 1) {
+                TimeUnit.MILLISECONDS.sleep(random.nextInt(50));
                 System.out.println("2nd stroke!");
                 randomizeKeyPress(false);
             }
