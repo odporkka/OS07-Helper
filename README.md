@@ -1,3 +1,4 @@
 # OS07-Helper
-##Tool to help with os07
-AFK-preventer etc.
+###App to help with os07
+#####Tools:
+1. AFK-preventer
