@@ -4,13 +4,10 @@ import Tools.ToolRunTimer;
 import java.awt.AWTException;
 import java.awt.Robot;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Random;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -44,13 +41,17 @@ class ArgHandler {
         String command = args[0];
         System.out.println("Executing command: " + command);
 
-        if (command.equals("afk")) {
-            invokeAfkPreventer();
-        } else if (command.equals("help")) {
-            printHelp();
-        } else {
-            System.out.println("No command: \"" + args[0] + "\" found!");
-            printHelp();
+        switch (command) {
+            case "afk":
+                invokeAfkPreventer();
+                break;
+            case "help":
+                printHelp();
+                break;
+            default:
+                System.out.println("No command: \"" + args[0] + "\" found!");
+                printHelp();
+                break;
         }
         System.out.println("Run succesfull!");
         System.out.println("Quitting!");
@@ -62,8 +63,6 @@ class ArgHandler {
      */
     private void invokeAfkPreventer() {
         Thread t1 = new Thread(afk_p);
-        afk_p.setKey("VK_A");
-        t1.start();
 
         //Starting timer in different thread if time is set.
         if (args[1] != null) {
@@ -76,15 +75,21 @@ class ArgHandler {
             }
             trt = new ToolRunTimer(0, waitTime, 0);
             Thread t2 = new Thread(trt);
+            //Starting timer for AFK_Preventer thread
             t2.start();
 
             synchronized (t2) {
                 try {
                     System.out.println("Running AFK_Preventer for " + waitTime + " minutes...");
                     System.out.println("Press ctrl-c twice in terminal or quit manually to stop.");
+                    //Starting AFK_Preventer thread
+                    t1.start();
+                    //Waiting for timer to run out
                     t2.wait();
                     System.out.println("Stopping...");
+                    //Waiting for timer thread to close
                     trt.join();
+                    //Stopping AFK_Preventer
                     afk_p.stop();
 
                 } catch (InterruptedException ex) {
@@ -96,6 +101,9 @@ class ArgHandler {
 
     }
 
+    /**
+     * Method for printing help in console.
+     */
     private void printHelp() {
         ClassLoader cl = getClass().getClassLoader();
         InputStream is = cl.getResourceAsStream("help.txt");

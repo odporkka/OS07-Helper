@@ -8,15 +8,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * AFK prevention tool. Randomizes time between keystrokes to avoid detection.
- * Also key press is randomized between 100 and 200 milliseconds to simulate
- * natural action. Tool is ran in a own thread invoked at upper level.
- * 
+ * AFK prevention tool. Randomizes time between keystrokes and time key is
+ * pressed. Also sometimes adds randomly a second press. Tool is ran in a own
+ * thread invoked at upper level.
+ *
  * @author ode
  */
-public class AFK_Preventer implements Runnable{
-    
-     
+public class AFK_Preventer implements Runnable {
+
     private final Robot robot;
     private final Random random;
     private final int maxWaitTime;
@@ -24,7 +23,7 @@ public class AFK_Preventer implements Runnable{
     private KeyEvent key;
     private int runningTime;
 
-    public AFK_Preventer(Robot robot, Random random){
+    public AFK_Preventer(Robot robot, Random random) {
         this.robot = robot;
         this.random = random;
         this.maxWaitTime = 20;
@@ -38,24 +37,21 @@ public class AFK_Preventer implements Runnable{
     public synchronized void run() {
         this.isRunning = true;
         System.out.println("Keep the window you want input in in front..");
-       
-        while (isRunning) { 
+
+        while (isRunning) {
             try {
-                //Press key
-                TimeUnit.SECONDS.sleep(2);
-                robot.keyPress(KeyEvent.VK_LEFT);
-                TimeUnit.MILLISECONDS.sleep(100+random.nextInt(100));
-                robot.keyRelease(KeyEvent.VK_LEFT);
-                
+                //Simulates key press
+                randomizeKeyPress(true);
+
                 //Calculates wait time between keystrokes 
-                int waitTimeMinutes = random.nextInt(maxWaitTime-1);
+                int waitTimeMinutes = random.nextInt(maxWaitTime - 1);
                 int waitTimeSeconds = random.nextInt(59);
-                int waitTimeTotal = waitTimeMinutes*60;
+                int waitTimeTotal = waitTimeMinutes * 60;
                 waitTimeTotal += waitTimeSeconds;
                 System.out.println(waitTimeTotal);
-                
-                System.out.println("Next keystroke in: "+waitTimeMinutes+" min "+
-                        waitTimeSeconds+" sec");
+
+                System.out.println("Next keystroke in: " + waitTimeMinutes + " min "
+                        + waitTimeSeconds + " sec");
                 TimeUnit.SECONDS.sleep(waitTimeTotal);
             } catch (InterruptedException ex) {
                 Logger.getLogger(AFK_Preventer.class.getName()).log(Level.SEVERE, null, ex);
@@ -63,7 +59,7 @@ public class AFK_Preventer implements Runnable{
         }
     }
 
-    public void stop(){
+    public void stop() {
         this.isRunning = false;
     }
 
@@ -77,5 +73,45 @@ public class AFK_Preventer implements Runnable{
     public int getRunningTime() {
         return runningTime;
     }
-    
+
+    private void randomizeKeyPress(boolean firstPress) throws InterruptedException {
+        int pressedKey = random.nextInt(4);
+        System.out.println("Pressing key #" + pressedKey);
+        switch (pressedKey) {
+            case 0:
+                TimeUnit.MILLISECONDS.sleep(15);
+                robot.keyPress(KeyEvent.VK_LEFT);
+                TimeUnit.MILLISECONDS.sleep(100 + random.nextInt(100));
+                robot.keyRelease(KeyEvent.VK_LEFT);
+                break;
+            case 1:
+                TimeUnit.MILLISECONDS.sleep(15);
+                robot.keyPress(KeyEvent.VK_RIGHT);
+                TimeUnit.MILLISECONDS.sleep(100 + random.nextInt(100));
+                robot.keyRelease(KeyEvent.VK_RIGHT);
+                break;
+            case 2:
+                TimeUnit.MILLISECONDS.sleep(15);
+                robot.keyPress(KeyEvent.VK_UP);
+                TimeUnit.MILLISECONDS.sleep(100 + random.nextInt(100));
+                robot.keyRelease(KeyEvent.VK_UP);
+                break;
+            case 3:
+                TimeUnit.MILLISECONDS.sleep(15);
+                robot.keyPress(KeyEvent.VK_DOWN);
+                TimeUnit.MILLISECONDS.sleep(100 + random.nextInt(100));
+                robot.keyRelease(KeyEvent.VK_DOWN);
+                break;
+        }
+
+        if (firstPress) {
+            int r = random.nextInt(4);
+            if (r > 1) {
+                System.out.println("2nd stroke!");
+                randomizeKeyPress(false);
+            }
+        }
+
+    }
+
 }
