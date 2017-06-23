@@ -14,14 +14,13 @@ import java.util.logging.Logger;
  *
  * @author ode
  */
-public class AFK_Preventer implements Runnable {
+public class AFK_Preventer implements OsHelperTool {
 
     private final Robot robot;
     private final Random random;
+    //Max time between keystrokes, defaults to 20 min to prevent afk
     private final int maxWaitTime;
     private volatile boolean isRunning;
-    private KeyEvent key;
-    private int runningTime;
 
     public AFK_Preventer(Robot robot, Random random) {
         this.robot = robot;
@@ -37,7 +36,12 @@ public class AFK_Preventer implements Runnable {
     public synchronized void run() {
         this.isRunning = true;
         System.out.println("Keep the window you want input in in front..");
-
+        try {
+            TimeUnit.SECONDS.sleep(3);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(AFK_Preventer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         while (isRunning) {
             try {
                 //Simulates key press
@@ -59,19 +63,9 @@ public class AFK_Preventer implements Runnable {
         }
     }
 
+    @Override
     public void stop() {
         this.isRunning = false;
-    }
-
-    public void setKey(String key) {
-    }
-
-    public void setRunningTime(int runningTime) {
-        this.runningTime = runningTime;
-    }
-
-    public int getRunningTime() {
-        return runningTime;
     }
 
     private void randomizeKeyPress(boolean firstPress) throws InterruptedException {

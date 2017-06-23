@@ -1,5 +1,7 @@
 
 import Tools.AFK_Preventer;
+import Tools.NMZ_Helper;
+import Tools.OsHelperTool;
 import Tools.ToolRunTimer;
 import java.awt.AWTException;
 import java.awt.Robot;
@@ -23,6 +25,7 @@ class ArgHandler {
 
     private final String[] args;
     private final AFK_Preventer afk_p;
+    private final NMZ_Helper nmz;
     private final Robot robot;
     private final Random random;
     private ToolRunTimer trt;
@@ -32,18 +35,25 @@ class ArgHandler {
         this.robot = new Robot();
         this.random = new Random();
         this.afk_p = new AFK_Preventer(robot, random);
+        this.nmz = new NMZ_Helper(robot, random);
     }
 
     /**
      * Method for argument executing.
      */
     public void executeArguments() {
-        String command = args[0];
+        String command = "help";
+        if (args.length != 0) {
+            command = args[0];
+        }
         System.out.println("Executing command: " + command);
 
         switch (command) {
             case "afk":
-                invokeAfkPreventer();
+                invokeTool(afk_p);
+                break;
+            case "nmz":
+                invokeTool(nmz);
                 break;
             case "help":
                 printHelp();
@@ -53,52 +63,6 @@ class ArgHandler {
                 printHelp();
                 break;
         }
-        System.out.println("Run succesfull!");
-        System.out.println("Quitting!");
-    }
-
-    /**
-     * Method for starting AFK_Preventer tool in a new thread. If time is set
-     * ToolRunTimer starts too and stops AFK_Preventer after given time.
-     */
-    private void invokeAfkPreventer() {
-        Thread t1 = new Thread(afk_p);
-
-        //Starting timer in different thread if time is set.
-        if (args[1] != null) {
-            int waitTime = 5;
-            try {
-                waitTime = Integer.parseInt(args[1]);
-            } catch (Exception e) {
-                System.out.println("Could not convert run time. Running till stopped...");
-                return;
-            }
-            trt = new ToolRunTimer(0, waitTime, 0);
-            Thread t2 = new Thread(trt);
-            //Starting timer for AFK_Preventer thread
-            t2.start();
-
-            synchronized (t2) {
-                try {
-                    System.out.println("Running AFK_Preventer for " + waitTime + " minutes...");
-                    System.out.println("Press ctrl-c twice in terminal or quit manually to stop.");
-                    //Starting AFK_Preventer thread
-                    t1.start();
-                    //Waiting for timer to run out
-                    t2.wait();
-                    System.out.println("Stopping...");
-                    //Waiting for timer thread to close
-                    trt.join();
-                    //Stopping AFK_Preventer
-                    afk_p.stop();
-
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(ArgHandler.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-
-        }
-
     }
 
     /**
@@ -119,5 +83,50 @@ class ArgHandler {
         }
 
     }
+    
+    /**
+     * Invokes helper tool. Calls for tools run() and stop() methods 
+     * respectively. Timer is run also if set.
+     * @param tool 
+     */
+    private void invokeTool(OsHelperTool tool) {
+        Thread t1 = new Thread(tool);
 
+        //Starting timer in different thread if time is set.
+        if (args.length > 1) {
+            int waitTime;
+            try {
+                waitTime = Integer.parseInt(args[1]);
+            } catch (Exception e) {
+                System.out.println("Could not convert run time. Stopping execute..");
+                return;
+            }
+            trt = new ToolRunTimer(0, waitTime, 0);
+            Thread t2 = new Thread(trt);
+            //Starting timer for tool
+            t2.start();
+
+            synchronized (t2) {
+                try {
+                    System.out.println("Running " + tool.getClass().getName() + " for " + waitTime + " minutes...");
+                    System.out.println("Press ctrl-c twice in terminal or quit manually to stop.");
+                    //Starting tool thread
+                    t1.start();
+                    //Waiting for timer to run out
+                    t2.wait();
+                    System.out.println("Stopping...");
+                    //Waiting for timer thread to close
+                    trt.join();
+                    //Stopping NMZ_Helper
+                    tool.stop();
+
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(ArgHandler.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        } else {
+            System.out.println("Time not set. Running " + tool.getClass().getName() + " till stopped.");
+            t1.start();
+        }
+    }
 }

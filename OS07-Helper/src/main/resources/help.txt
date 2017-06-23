@@ -1,8 +1,8 @@
-OS07 HELPER 1.0 by Ode
+OS07 HELPER 1.1 by Ode
 
 SYNOPSIS:
 
-java -jar [programname].jar [afk] [runTime]
+java -jar [programname].jar [afk, nmz] [runTime]
 
 RunTime is in minutes and optional.
 
@@ -12,3 +12,7 @@ If time is not set AFK_Preventer will run until closed.
 Default key that is pressed is left arrow. Press interval is randomized between
 0 and 20 minutes.
 
+NMZ:
+
+If time is not set NMX_Helper will run until closed.
+Double clicks every 44 to 59 seconds. Keep mouse on prayer to prayer flick.
