@@ -1,4 +1,4 @@
-package Tools;
+package tools;
 
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;

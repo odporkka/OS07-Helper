@@ -1,8 +1,8 @@
-package Tools;
+package tools;
 
+import helpers.HumanLikeRandom;
 import java.awt.Robot;
 import java.awt.event.InputEvent;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,10 +14,10 @@ import java.util.logging.Logger;
 public class NMZ_Helper implements OsHelperTool {
     
     private final Robot robot;
-    private final Random random;
+    private final HumanLikeRandom random;
     private volatile boolean isRunning;
 
-    public NMZ_Helper(Robot robot, Random random) {
+    public NMZ_Helper(Robot robot, HumanLikeRandom random) {
         this.robot = robot;
         this.random = random;
     }

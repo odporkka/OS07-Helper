@@ -1,15 +1,16 @@
 
-import Tools.AFK_Preventer;
-import Tools.NMZ_Helper;
-import Tools.OsHelperTool;
-import Tools.ToolRunTimer;
+import tools.AFK_Preventer;
+import tools.AutoFletcher;
+import helpers.HumanLikeRandom;
+import tools.NMZ_Helper;
+import tools.OsHelperTool;
+import tools.ToolRunTimer;
 import java.awt.AWTException;
 import java.awt.Robot;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,16 +27,18 @@ class ArgHandler {
     private final String[] args;
     private final AFK_Preventer afk_p;
     private final NMZ_Helper nmz;
+    private final AutoFletcher fletcher;
     private final Robot robot;
-    private final Random random;
+    private final HumanLikeRandom random;
     private ToolRunTimer trt;
 
     public ArgHandler(String[] args) throws AWTException {
         this.args = args;
         this.robot = new Robot();
-        this.random = new Random();
+        this.random = new HumanLikeRandom();
         this.afk_p = new AFK_Preventer(robot, random);
         this.nmz = new NMZ_Helper(robot, random);
+        this.fletcher = new AutoFletcher(robot, random);
     }
 
     /**
@@ -54,6 +57,9 @@ class ArgHandler {
                 break;
             case "nmz":
                 invokeTool(nmz);
+                break;
+            case "fletch":
+                invokeTool(fletcher);
                 break;
             case "help":
                 printHelp();

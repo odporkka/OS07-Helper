@@ -1,5 +1,6 @@
-package Tools;
+package tools;
 
+import helpers.HumanLikeRandom;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.util.Random;
@@ -17,12 +18,12 @@ import java.util.logging.Logger;
 public class AFK_Preventer implements OsHelperTool {
 
     private final Robot robot;
-    private final Random random;
+    private final HumanLikeRandom random;
     //Max time between keystrokes, defaults to 20 min to prevent afk
     private final int maxWaitTime;
     private volatile boolean isRunning;
 
-    public AFK_Preventer(Robot robot, Random random) {
+    public AFK_Preventer(Robot robot, HumanLikeRandom random) {
         this.robot = robot;
         this.random = random;
         this.maxWaitTime = 20;
