@@ -1,4 +1,7 @@
 
+import helpers.BankOpener;
+import helpers.ColorFinder;
+import helpers.HumanLikeClicker;
 import tools.AFK_Preventer;
 import tools.AutoFletcher;
 import helpers.HumanLikeRandom;
@@ -11,6 +14,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,20 +29,32 @@ import java.util.logging.Logger;
 class ArgHandler {
 
     private final String[] args;
+    
+    //Helpers
+    private final Robot robot;
+    private final HumanLikeRandom random;
+    private final HumanLikeClicker clicker;
+    private final ColorFinder colorFinder;
+    private final BankOpener bankOpener;
+    
+    //Tools
+    private ToolRunTimer trt;
     private final AFK_Preventer afk_p;
     private final NMZ_Helper nmz;
     private final AutoFletcher fletcher;
-    private final Robot robot;
-    private final HumanLikeRandom random;
-    private ToolRunTimer trt;
 
     public ArgHandler(String[] args) throws AWTException {
         this.args = args;
+        
         this.robot = new Robot();
         this.random = new HumanLikeRandom();
+        this.clicker = new HumanLikeClicker(robot, random);
+        this.colorFinder = new ColorFinder(robot);
+        this.bankOpener = new BankOpener(colorFinder, random, clicker, robot);
+        
         this.afk_p = new AFK_Preventer(robot, random);
         this.nmz = new NMZ_Helper(robot, random);
-        this.fletcher = new AutoFletcher(robot, random);
+        this.fletcher = new AutoFletcher(robot, random, clicker, bankOpener);
     }
 
     /**
@@ -63,6 +79,9 @@ class ArgHandler {
                 break;
             case "help":
                 printHelp();
+                break;
+            case "test":
+                test();
                 break;
             default:
                 System.out.println("No command: \"" + args[0] + "\" found!");
@@ -133,6 +152,15 @@ class ArgHandler {
         } else {
             System.out.println("Time not set. Running " + tool.getClass().getName() + " till stopped.");
             t1.start();
+        }
+    }
+    
+    private void test(){
+        try {
+            TimeUnit.MILLISECONDS.sleep(3000);
+            colorFinder.checkIfBankOpen();
+        } catch (InterruptedException | IOException ex) {
+            Logger.getLogger(ArgHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

@@ -8,7 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * 
  * @author ode
  */
 public class NMZ_Helper implements OsHelperTool {
