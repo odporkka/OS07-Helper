@@ -1,4 +1,5 @@
 
+import gui.BasicGui;
 import helpers.BankOpener;
 import helpers.ColorFinder;
 import helpers.HumanLikeClicker;
@@ -17,6 +18,7 @@ import java.io.InputStreamReader;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Application;
 
 /**
  * Class responsible for command line argument handling and invoking runnable
@@ -29,14 +31,14 @@ import java.util.logging.Logger;
 class ArgHandler {
 
     private final String[] args;
-    
+
     //Helpers
     private final Robot robot;
     private final HumanLikeRandom random;
     private final HumanLikeClicker clicker;
     private final ColorFinder colorFinder;
     private final BankOpener bankOpener;
-    
+
     //Tools
     private ToolRunTimer trt;
     private final AFK_Preventer afk_p;
@@ -45,13 +47,13 @@ class ArgHandler {
 
     public ArgHandler(String[] args) throws AWTException {
         this.args = args;
-        
+
         this.robot = new Robot();
         this.random = new HumanLikeRandom();
         this.clicker = new HumanLikeClicker(robot, random);
         this.colorFinder = new ColorFinder(robot);
         this.bankOpener = new BankOpener(colorFinder, random, clicker, robot);
-        
+
         this.afk_p = new AFK_Preventer(robot, random);
         this.nmz = new NMZ_Helper(robot, random);
         this.fletcher = new AutoFletcher(robot, random, clicker, bankOpener);
@@ -61,10 +63,12 @@ class ArgHandler {
      * Method for argument executing.
      */
     public void executeArguments() {
-        String command = "help";
-        if (args.length != 0) {
-            command = args[0];
-        }
+        if (args.length == 0) {
+            Application.launch(BasicGui.class, args);
+            return;
+        } 
+        String command = args[0];
+
         System.out.println("Executing command: " + command);
 
         switch (command) {
@@ -108,11 +112,12 @@ class ArgHandler {
         }
 
     }
-    
+
     /**
-     * Invokes helper tool. Calls for tools run() and stop() methods 
+     * Invokes helper tool. Calls for tools run() and stop() methods
      * respectively. Timer is run also if set.
-     * @param tool 
+     *
+     * @param tool
      */
     private void invokeTool(OsHelperTool tool) {
         Thread t1 = new Thread(tool);
@@ -154,8 +159,8 @@ class ArgHandler {
             t1.start();
         }
     }
-    
-    private void test(){
+
+    private void test() {
         try {
             TimeUnit.MILLISECONDS.sleep(3000);
             colorFinder.checkIfBankOpen();
